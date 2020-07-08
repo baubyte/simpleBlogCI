@@ -95,26 +95,41 @@ class Dashboard extends BaseController
 			],
 		]);
 
-			
-			if (!$validation->withRequest($this->request)->run()) {
-				$errors = $validation->getErrors();
-				foreach ($errors as $error) {
-					echo $error;
-				}
-			} else {
-				/**Cargamos El Modelo */
-				$newsletterModel = new NewsletterModel();
-				/**Comprobamos que el Email No exista en la db*/
-				$existEmails = $newsletterModel->where("email", $_POST['email'])->findAll();
-				/**Comprobamos si tiene algo es decir que ya existe el email */
-				if ($existEmails) {
-					echo "El E-mail ya existe.";
-				} else {
-					$id = $newsletterModel->insert($_POST);
-					echo "Bienvenido al Newsletter.";
-				}
-			}
 
+		if (!$validation->withRequest($this->request)->run()) {
+			$errors = $validation->getErrors();
+			foreach ($errors as $error) {
+				echo $error;
+			}
+		} else {
+			/**Cargamos El Modelo */
+			$newsletterModel = new NewsletterModel();
+			/**Comprobamos que el Email No exista en la db*/
+			$existEmails = $newsletterModel->where("email", $_POST['email'])->findAll();
+			/**Comprobamos si tiene algo es decir que ya existe el email */
+			if ($existEmails) {
+				echo "El E-mail ya existe.";
+			} else {
+				$id = $newsletterModel->insert($_POST);
+				echo "Bienvenido al Newsletter.";
+			}
+		}
+	}
+	/**Para el alta de los POST */
+	public function post($slug = null, $id = null)
+	{
+		if ($slug && $id) {
+			/**Modelo Posts */
+			$postsModel = new PostsModel();
+			/**Buscamos todos con el id igual al que recibimos */
+			$post = $postsModel->where("id", $id)->findAll();
+			/**Cargamos las Categorías */
+			$categoriesModel = new CategoriesModel();
+			$data["categories"]= $categoriesModel->where("id", $post[0]['category'])->findAll();
+			$data["post"] = $post;
+
+			$this->loadViews("post", $data);
+		}
 	}
 	/**Para Cargar la Vista que pasamos */
 	public function loadViews($view = null, $data = null)
