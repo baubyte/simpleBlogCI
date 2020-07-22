@@ -1,7 +1,7 @@
 <section class="s-featured">
     <div class="row">
         <div class="col-full">
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="<?php echo base_url().'/newpost/create' ?>" method="post" enctype="multipart/form-data">
                 <input placeholder="Titulo del Post" type="text" name="title" id="title">
                 <input placeholder="Introducción del Post" type="text" name="intro" id="intro">
                 <textarea placeholder="Contenido del Post" name="content" id="summernote"></textarea>

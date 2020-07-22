@@ -31,7 +31,13 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Dashboard::index');
-
+/**Crear un Nuevo POST */
+$routes->get('/newpost', 'Dashboard::uploadPost');
+/**Crear un Nuevo POST */
+$routes->post('/newpost/create', 'Dashboard::uploadPost');
+/**Ver un POST */
+$routes->match(['get', 'post'],'/post/(:segment)/(:num)', 'Dashboard::post/$1/$2',['as' => 'post']);
+$routes->get('/category/(:num)', 'Dashboard::category/$1', ['as' => 'category']);
 /**
  * --------------------------------------------------------------------
  * Additional Routing

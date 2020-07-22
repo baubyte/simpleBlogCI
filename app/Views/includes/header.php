@@ -68,7 +68,7 @@
     <header class="s-header header">
 
         <div class="header__logo">
-            <a class="logo" href="index.html">
+            <a class="logo" href="<?php echo base_url(); ?>">
                 <img src="<?php echo base_url(); ?>/assets/images/logo.svg" alt="Homepage">
             </a>
         </div> <!-- end header__logo -->
@@ -103,7 +103,7 @@
                             $query = $db->query("SELECT * FROM categories");
                             $categories = $query->getResult();
                             foreach ($categories as $category) {
-                                echo '<li><a href="'. base_url().'/dashboard/category/'.$category->id.'">'.$category->name.'</a></li>'  ;
+                                echo '<li><a href="'.route_to('category',$category->id).'">'.$category->name.'</a></li>'  ;
                             }
                         ?>
                     </ul>

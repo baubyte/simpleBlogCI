@@ -21,7 +21,7 @@ class App extends BaseConfig
 	| environments.
 	|
 	*/
-	public $baseURL = 'https://blogci.test/';
+	public $baseURL = 'http://simpleblogci.test:8080/';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -99,7 +99,7 @@ class App extends BaseConfig
 	| dates with the date helper, and can be retrieved through app_timezone()
 	|
 	*/
-	public $appTimezone = 'America/Chicago';
+	public $appTimezone = 'America/Argentina/Buenos_Aires';
 
 	/*
 	|--------------------------------------------------------------------------

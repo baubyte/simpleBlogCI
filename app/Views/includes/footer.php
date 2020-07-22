@@ -15,7 +15,7 @@
                         foreach ($posts as $post) {
                     ?>
                     <article class="col-block popular__post">
-                        <a href="<?php echo base_url()?>/dashboard/post/<?php echo $post->slug.'/'.$post->id?>" class="popular__thumb">
+                        <a href="<?php echo route_to('post',$post->slug,$post->id) ?>" class="popular__thumb">
                             <img src="<?php echo base_url();?>/uploads/<?php echo $post->banner ?>" alt="">
                         </a>
                         <h5><?php echo $post->title?></h5>

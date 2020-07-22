@@ -6,8 +6,10 @@ use CodeIgniter\Controller;
 
 use App\Models\PostsModel;
 use App\Models\CategoriesModel;
+use App\Models\CommentsModel;
 use App\Models\UsersModel;
 use App\Models\NewsletterModel;
+use App\Models\CommenstsModel;
 
 class Dashboard extends BaseController
 {
@@ -73,6 +75,7 @@ class Dashboard extends BaseController
 				/**Armamos el Slug para el Post */
 				$_POST['slug'] = url_title($_POST['title']);
 				$postsModel->save($_POST);
+				return redirect('newpost');
 			}
 		}
 		/**Mostramos la Vista */
@@ -119,17 +122,73 @@ class Dashboard extends BaseController
 	public function post($slug = null, $id = null)
 	{
 		if ($slug && $id) {
+			/**Modelos de los Comentarios */
+			$commentsModel = new CommentsModel();
+			$data['comments'] = $commentsModel->where("post_id", $id)->findAll();
+			$data['commentsTotal'] = $commentsModel->where("post_id", $id)->countAllResults();
+			/**Para los Comentarios de los post */
+			if ($_POST) {
+				/**Cargamos los Helpers Necesarios */
+				helper(["url", "form"]);
+				/**Para las Validaciones del Formulario */
+				$validation = \Config\Services::validation();
+				/**Reglas para los Campos del Formulario */
+				$validation->setRules([
+					"cName" => "required",
+					"cEmail" => "required|valid_email",
+					"cMessage" => "required|min_length['20']"
+				], [
+					"email" => [
+						"required" => "Debe Ingresar un E-mail.",
+						"valid_email" => " Debe Ingresar un E-mail Valido."
+					],
+					"cName" => [
+						"required" => "Debe Ingresar un Nombre."
+					],
+					"cMessage" => [
+						"required" => "Debe Ingresar un Comentario.",
+						"min_length" => "Debe Ingresar un Minimo de 20 Caracteres."
+					]
+				]);
+				/**Comprobamos las Validaciones */
+				if (!$validation->withRequest($this->request)->run()) {
+					$data['error'] = "true";
+				} else {
+					$dataComment = [
+						"post_id" => $id,
+						"name" => $_POST["cName"],
+						"email" => $_POST["cEmail"],
+						"comment" => $_POST["cMessage"]
+					];
+					$commentsModel->insert($dataComment);
+				}
+			}
+
 			/**Modelo Posts */
 			$postsModel = new PostsModel();
 			/**Buscamos todos con el id igual al que recibimos */
 			$post = $postsModel->where("id", $id)->findAll();
 			/**Cargamos las Categorías */
 			$categoriesModel = new CategoriesModel();
-			$data["categories"]= $categoriesModel->where("id", $post[0]['category'])->findAll();
+			$data["categories"] = $categoriesModel->where("id", $post[0]['category'])->findAll();
 			$data["post"] = $post;
 
 			$this->loadViews("post", $data);
 		}
+	}
+	/**Para los Mostrar los POST por Categorias */
+	public function category($id = null)
+	{
+		/**Modelo Posts */
+		$postsModel = new PostsModel();
+		/**Cargamos las Categorías */
+		$categoriesModel = new CategoriesModel();
+		/**Buscamos el Nombre de las Categorias */
+		$data["category"] = $categoriesModel->where("id",$id)->findAll();
+		/**Buscamos los Post de esa Categoria */
+		$data["posts"] = $postsModel->where("category",$id)->findAll();
+
+		$this->loadViews("category",$data);
 	}
 	/**Para Cargar la Vista que pasamos */
 	public function loadViews($view = null, $data = null)
